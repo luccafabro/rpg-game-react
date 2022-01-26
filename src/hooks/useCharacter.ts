@@ -4,15 +4,45 @@ import { mapSpots } from "../data/mapSpots";
 
 type Props = {
     name: string;
+    life: number;
 }
 
-export const useCharacter = (propName: string) => {
+export const useCharacter = (propName: string, propLife: number) => {
     const [name, setName] = useState(propName);
-    const [pos, setPos] = useState({
-        x: 1,
-        y: 2
-    });
+    const [power, setPower] = useState({max: 15, min: 5})
+    const [alive, setAlive] = useState(true);
+    const [life, setLife] = useState(propLife);
+    const [pos, setPos] = useState({x: 1, y: 2});
     const [side, setSide] = useState<CharacterSides>('down');
+
+    const isAlive = () => {
+
+    }
+
+
+    const attack = (enemyPos : {x: number, y: number}) => {
+        const randomPower = power.min + Math.random() * (power.max - power.min);
+        const distanceX = pos.x -enemyPos.x;
+        const distanceY = pos.y - enemyPos.y;
+
+        if (distanceX + distanceY > 2) {
+            return false;
+        }
+        return randomPower;
+    }
+
+    const receiveDamage = (damage: number) => {
+        setLife(life => (
+            life = Number(lifeAfterDamage(life, damage))
+        ));
+    }
+
+    const lifeAfterDamage = (life: number, damage: number) => {
+        console.log(`Recebeu ${damage}`)
+        console.log(`Life ${life}`)
+        if (life - damage > 0) return life - damage;
+        if (life - damage < 0) return 0;
+    }
 
     const moveLeft = () => {
         setPos(pos => ({
@@ -58,9 +88,12 @@ export const useCharacter = (propName: string) => {
         y: pos.y,
         side,
         name,
+        life,
         moveDown,
         moveUp,
         moveLeft,
-        moveRight
+        moveRight,
+        attack,
+        receiveDamage
     };
 }
